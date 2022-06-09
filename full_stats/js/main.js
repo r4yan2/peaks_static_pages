@@ -10,11 +10,11 @@ var tabs = [
 ];
 
 function switchTab(ev, el){
-  currentTabEl = document.getElementsByClassName("buttonActive")[0]
+  currentTabEl = document.getElementsByClassName("nav-link active")[0]
   if (currentTabEl) {
-    currentTabEl.classList.remove("buttonActive");
+    currentTabEl.classList.remove("active");
   }
-  ev.currentTarget.classList.add("buttonActive");
+  ev.currentTarget.classList.add("active");
   tabs.forEach(function(tab){ 
     tabElem = document.getElementsByClassName(tab[0])[0];
     tabElem.style.display = (tab[0] === el ? tab[1] : 'none');
@@ -46,7 +46,7 @@ function makePtreeChart1(values){
   const data = {
     datasets: [{
         data: values["num_elements_ptree_stats"],
-        label: 'nodes having x elements',
+        label: 'Nodes in bin',
         backgroundColor: NAMED_COLORS[0],
     }],
     labels: range(0, 51, 10),
@@ -56,11 +56,11 @@ function makePtreeChart1(values){
     plugins: {
       title: {
         display: true,
-        text: 'Number of elements per leaf node'
+        text: 'Leaf node grouped by element number'
       },
       subtitle: {
         display: true,
-        text: 'divided in bins'
+        text: '(divided in element bins)'
       },
     },
     legend: {
@@ -85,7 +85,7 @@ function makePtreeChart1(values){
         var xAxis = chart.scales['x'];
         var tickDistance = xAxis.width / (xAxis.ticks.length);
         xAxis.ticks.forEach((value, index) => {
-            var x = tickDistance * 0.5 + tickDistance * index;
+            var x = tickDistance * 0.25 + tickDistance * index;
             var y = chart.height - 10;
             chart.ctx.save();        
             chart.ctx.fillText(value.label, x, y);
@@ -116,7 +116,7 @@ function makePtreeChart2(values){
          },
          subtitle: {
            display: true,
-           text: 'In an optimal tree this graph should be exponential (except the last)'
+           text: 'In an optimal tree this graph should be exponential'
          },
        },
         xAxes: {
@@ -272,11 +272,12 @@ function makeUserattributesChart1(values){
     data: {
       datasets: [{
         data: values["image"]["size"],
+        label: '# image user attributes in this bin',
         backgroundColor: NAMED_COLORS[0],
       }],
       labels: values["ticks"].concat([String(values["maxsize_image"])]),
     },
-    options: Object.assign({}, options, {plugins: {title: {display: true, text: "Image attribute size divided in bins"}}})
+    options: Object.assign({}, options, {plugins: {title: {display: true, text: "Image attribute sizes divided in bins"}}})
   });
   makeChart('userattributes-chart-other', {
     type: 'bar',
@@ -299,6 +300,7 @@ function makeUserattributesChart1(values){
     data: {
       datasets: [{
         data: values["other"]["size"],
+        label: '# other user attributes in this bin',
         backgroundColor: NAMED_COLORS[1],
       }],
       labels: values["ticks"].concat([String(values["maxsize_other"])]),
@@ -422,6 +424,12 @@ function makePubkeyChart1(values){
   makeChart('pubkey-pie', {
     type: 'pie',
     options: {
+        plugins: {
+            title: {
+              display: true,
+              text: 'Division of algorithm used to generate keys'
+            },
+        },
       responsive: true,
     },
     data: {
@@ -461,7 +469,7 @@ function makePubkeyChart1(values){
     options: {
       plugins: {
         title: {
-          display: true,
+          display: false,
           text: 'Distribution of n per year'
         },
       },
@@ -493,7 +501,7 @@ function makePubkeyChart1(values){
     options: {
       plugins: {
         title: {
-          display: true,
+          display: false,
           text: 'Distribution of n per year'
         },
       },
@@ -534,8 +542,8 @@ function makePubkeyChart1(values){
     options: {
       plugins: {
         title: {
-          display: true,
-          text: 'Chart.js Bar Chart - Stacked'
+          display: false,
+          text: 'Increment of public keys per keys'
         },
       },
       responsive: true,
@@ -561,7 +569,8 @@ function makePubkeyChart1(values){
         {
           labels: years,
           data: values["elliptic"]["sizes"],
-          backgroundColor: NAMED_COLORS[0]
+          backgroundColor: NAMED_COLORS[0],
+          label: 'EC created in the year',
         }
       ]
     },
@@ -569,7 +578,7 @@ function makePubkeyChart1(values){
       plugins: {
         title: {
           display: true,
-          text: 'Chart.js Bar Chart - Stacked'
+          text: 'Increment in EC keys'
         },
       },
       responsive: true,
@@ -588,6 +597,7 @@ function makePubkeyChart1(values){
           fill: false,
           cubicInterpolationMode: 'monotone',
           tension: 0.3,
+          label: '# keys added'
         }
       ]
     },
@@ -595,7 +605,7 @@ function makePubkeyChart1(values){
       plugins: {
         title: {
           display: true,
-          text: 'Chart.js Bar Chart - Stacked'
+          text: 'Number of created public keys per year'
         },
       },
       interaction: {
@@ -615,6 +625,7 @@ function makeUseridChart1(values){
     data: {
       labels: values["domain"]["label"],
       datasets: [{
+          label: 'email',
         data: values["domain"]["value"],
         backgroundColor: CHART_COLORS.blue,
       }]
@@ -662,6 +673,7 @@ function makeUseridChart1(values){
       datasets: [{
         data: values["size"]["value"],
         backgroundColor: NAMED_COLORS[2],
+        label: 'size',
       }],
       labels: values["size"]["label"],
     },
@@ -769,7 +781,7 @@ function makeSignatureChart1(values){
       plugins: {
         title: {
           display: true,
-          text: 'Distribution of algorithm per year'
+          text: 'New signatures divided by type per year'
         },
       },
       responsive: true,
@@ -800,7 +812,7 @@ function makeSignatureChart1(values){
       plugins: {
         title: {
           display: true,
-          text: 'Distribution of algorithm per year'
+          text: 'Overview of new signatures per year'
         },
       },
       responsive: true,
@@ -874,7 +886,7 @@ function makePubkeyVulnerabilityChart1(values){
         plugins: {
           title: {
             display: true,
-            text: 'Distribution of algorithm per year'
+            text: alg.toUpperCase() + ' healthiness',
           },
         },
         responsive: true,
@@ -906,7 +918,7 @@ function makePubkeyVulnerabilityChart1(values){
         plugins: {
           title: {
             display: true,
-            text: 'Distribution of algorithm per year'
+            text: alg.toUpperCase() + ' Vulnerabilities found'
           },
         },
         responsive: true,
